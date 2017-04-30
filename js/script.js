@@ -12,9 +12,9 @@ var pi = Math.PI,
     brickCount = 0,
     score = 0,
     lives = 3,
-    ball = { x: canvas.width/2, y: canvas.height-30, r: 10, dx: 1, dy: -1 }
+    ball = { x: canvas.width/2, y: canvas.height-30, r: 10, dx: 1, dy: -1, type: 'soft'}
     paddle = { x: 0, y: 0, w: 100, h: 10 }
-    brick = { row: 2, col: 2, w: 0, h: 6, x: 0, y: 0, gapBetween: 10, gapT: 30, gapLR: 30 }, //LR left right, T top only
+    brick = { row: 3, col: 3, w: 0, h: 10, x: 0, y: 0, gapBetween: 10, gapT: 30, gapLR: 30 }, //LR left right, T top only
     totalNoOfBricks = brick.row * brick.col,
     paddle.x = (canvas.width - paddle.w) / 2,
     paddle.y = canvas.height - paddle.h,
@@ -68,11 +68,11 @@ function getRndInteger(min, max) { //min included and max excluded
 }
 
 function applyPower() {
-  // brickHavingBallPower = getRndInteger(1, totalNoOfBricks + 1);
+  brickHavingBallPower = getRndInteger(1, totalNoOfBricks + 1);
   brickHavingPaddlePower = getRndInteger(1, totalNoOfBricks + 1);
-  // if(brickHavingPaddlePower == brickHavingBallPower) {
-  //   applyPower();
-  // }
+  if(brickHavingPaddlePower == brickHavingBallPower) {
+    applyPower();
+  }
   // console.log('brickHavingBallPower: ' +brickHavingBallPower);
   // console.log('brickHavingPaddlePower: ' + brickHavingPaddlePower);
 }
@@ -92,6 +92,10 @@ function bricksInit() {
       if(brickHavingPaddlePower == brickCount) {
         bricks[r][c].hardness = 1;
         bricks[r][c].power = 'paddlePower';
+      }
+      if(brickHavingBallPower == brickCount) {
+        bricks[r][c].hardness = 1;
+        bricks[r][c].power = 'ballPower';
       }
     }
   }
@@ -113,6 +117,9 @@ function drawBricks() {
         if(bricks[r][c].power == 'paddlePower') {
           ctx.fillStyle = "#8e44ad";
         }
+        if(bricks[r][c].power == 'ballPower') {
+          ctx.fillStyle = "#d35400";
+        }
         ctx.fill();
         ctx.closePath();
         bricks[r][c].x = brick.x;
@@ -125,7 +132,7 @@ function drawBricks() {
 function drawBall() {
   ctx.beginPath();
   ctx.arc(ball.x, ball.y, ball.r, 0, 2*pi);
-  ctx.fillStyle = "#0095DD";
+  ctx.fillStyle = "#d35400";
   ctx.fill();
   ctx.closePath();
 }
@@ -144,8 +151,8 @@ function collisionDetection() {
       var b = bricks[r][c];
       if(b.status == 'visible' ) {
         if(ball.x > b.x && ball.x < b.x+brick.w && ball.y > b.y && ball.y < b.y+brick.h) { // if ball touches any brick
-          if(b.hardness == 2 ) { // decrease hardness of ball first before breaking
-            b.hardness = 1;
+          if(b.hardness == 2 && ball.type == 'soft') { // decrease hardness of ball first before breaking (only when ball is soft)
+            b.hardness = 1; 
             ball.dy = -ball.dy;
           } else {
             ball.dy = -ball.dy;
@@ -154,6 +161,11 @@ function collisionDetection() {
             if(b.power == 'paddlePower') {
               alert('you got paddle power');
               paddle.w += 100; 
+            }
+            if(b.power == 'ballPower') {
+              alert('ball is hard now');
+              ball.type = 'hard'; // used to bypass hardness detection case above.
+              ball.r += 2;
             }
             if(score == totalNoOfBricks) {
               alert("you win");
