@@ -234,5 +234,20 @@ function draw() {
 applyPower();
 bricksInit();
 
-setInterval(draw, 5);
+game_loop = setInterval(draw, 5);
 // draw();
+
+
+
+
+
+function pause()
+{ 
+  clearInterval(game_loop);
+}
+function play()
+{
+  if(typeof game_loop != "undefined") clearInterval(game_loop);
+  game_loop = setInterval(draw, 5);  
+}
+

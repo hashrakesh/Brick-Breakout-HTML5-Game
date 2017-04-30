@@ -1,6 +1,13 @@
 * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+}
+body {
+    font-family: sans-serif;
+}
+.clearfix {
+	clear: both;
 }
 #myCanvas {
   background: #eee;
@@ -10,4 +17,107 @@
   right: 0;
   bottom: 0;
   margin: auto;
+}
+
+.top {
+    background: red;
+    height: 80px;
+}
+.left {
+    float: left;
+    width: calc(100% - 250px);
+    background: #2c3e50;
+    height: 100%;
+}
+.right {
+    float: left;
+    width: 250px;
+    background: #7f8c8d;
+    height: 100%;
+}
+h1 {
+    text-align: center;
+    line-height: 80px;
+    color: #ffa600;
+    text-transform: capitalize;
+    font-weight: bold;
+    letter-spacing: 0.2px;
+    font-size: 40px;
+}
+h1.settings {
+    font-size: 26px;
+    font-weight: 100;
+}
+.bottom {
+    height: calc(100vh - 80px);
+}
+.bottom .right {
+    border-top: 1px solid rgba(255,255,255,.3);
+    /* padding: 20px 10px; */
+}
+.bottom .left {
+    border-top: 1px solid rgba(255,255,255,.3);
+    padding: 20px 10px;
+    position: relative;
+}
+h3.setting-heading {
+    color: wheat;
+    padding: 10px 10px;
+    background: rgba(0,0,0,0.3);
+    font-weight: 100;
+}
+.brick-type {
+    padding: 5px 10px;
+    background: rgba(0,0,0,0.1);
+    color: rgba(255, 255, 255, 0.8);
+    position: relative;
+    padding-left: 100px;
+}
+span.color {
+    position: absolute;
+    height: 50%;
+    width: 80px;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+}
+.normal .color {
+	background: #7f8c8d;
+}
+.hard .color {
+	background: #2c3e50;
+}
+.ball-power .color {
+	background: #d35400;
+}
+.paddle-power .color {
+	background: #8e44ad;
+}
+table {
+    width: 100%;
+    background: rgba(0,0,0,0.1);
+}
+td {
+    text-align: center;
+    padding: 2px 0;
+}
+.btns {
+	background: rgba(0,0,0,0.1);
+    padding: 10px;
+    text-align: center;
+}
+.btns span {
+    background: #ffa600;
+    padding: 8px 15px;
+    display: inline-block;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.btns span#pause {
+	margin-right: 10px;
+}
+.btns span:hover {
+    background: #ffc455;
 }

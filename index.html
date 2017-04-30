@@ -12,9 +12,106 @@
 
 </head>
 <body>
-	<canvas id="myCanvas" width="600" height="300"></canvas>
-	<h1>Heading 1</h1>
-	
+	<div class="top">
+		<div class="left">
+			<h1 class="heading">HMTL5 Brick Breakout Game</h1>
+		</div>
+		<div class="right">
+			<h1 class="settings">Short Info</h1>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+	<div class="bottom">
+		<div class="left">
+			<div class="canvas-outer">
+				<canvas id="myCanvas" width="600" height="300"></canvas>
+			</div>
+		</div>
+		<div class="right">
+			<div class="section">
+				<h3 class="setting-heading">Brick Types</h3>
+				<div class="brick-type normal">
+					<span class="color"></span>
+					<span class="name">Normal</span>
+				</div>
+				<div class="brick-type hard">
+					<span class="color"></span>
+					<span class="name">Hard</span>
+				</div>
+				<div class="brick-type ball-power">
+					<span class="color"></span>
+					<span class="name">Ball PowerUP</span>
+				</div>
+				<div class="brick-type paddle-power">
+					<span class="color"></span>
+					<span class="name">Paddle PowerUP</span>
+				</div>
+			</div>
+			<div class="section">
+				<h3 class="setting-heading">Powerups List</h3>
+				<div class="brick-type normal">
+					<span class="color"></span>
+					<span class="name">Normal</span>
+				</div>
+				<div class="brick-type hard">
+					<span class="color"></span>
+					<span class="name">Hard</span>
+				</div>
+			</div>
+			<div class="section">
+				<h3 class="setting-heading">Last Five Scores</h3>
+				<table>
+					<tr>
+						<th>Chance</th>
+						<th>Points</th>
+					</tr>
+					<tr>
+						<td>1</td>
+						<td>NA</td>
+					</tr>
+					<tr>
+						<td>2</td>
+						<td>NA</td>
+					</tr>
+					<tr>
+						<td>3</td>
+						<td>NA</td>
+					</tr>
+					<tr>
+						<td>4</td>
+						<td>NA</td>
+					</tr>
+					<tr>
+						<td>5</td>
+						<td>NA</td>
+					</tr>
+				</table>
+			</div>
+			<div class="section">
+				<h3 class="setting-heading">Play/Pause Game</h3>
+				<div class="btns">
+					<span id="pause" onclick="pause()">Pause</span>
+					<span id="play" onclick="play()">Play</span>
+				</div>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+
+
+<!-- 	<audio id="GamePlay" loop="loop" autoplay="autoplay">       
+	    <source src="GameGng.mp3" type="audio/mpeg" />
+	    Your browser does not support HTML5 audio.
+	</audio>
+	<audio id="GameOver">       
+	    <source src="GameOver.mp3" type="audio/mpeg" />
+	    Your browser does not support HTML5 audio.
+	</audio>
+	<audio id="SnakeFood">       
+	    <source src="SnakeEating.mp3" type="audio/mpeg" />
+	    Your browser does not support HTML5 audio.
+	</audio> -->
+
 	<script type="text/javascript" src="js/script.js"></script>
 </body>
 </html>
