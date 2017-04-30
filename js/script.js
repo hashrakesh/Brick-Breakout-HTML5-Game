@@ -1,4 +1,6 @@
-// Variable declarations  
+/*******************************/
+/*    Variable declarations    */
+/*******************************/
 
 var canvas = document.getElementById('myCanvas');
 var ctx = canvas.getContext('2d');
@@ -8,12 +10,16 @@ var pi = Math.PI,
     score = 0,
     lives = 3,
     ball = { x: canvas.width/2, y: canvas.height-30, r: 10, dx: 1, dy: -1 }
-    paddle = { x: 0, y: 0, w: 100, h: 10 }
-    brick = { row: 3, col: 3, w: 0, h: 10, x: 0, y: 0, gapBetween: 10, gapT: 30, gapLR: 30 }, //LR left right, T top only
+    paddle = { x: 0, y: 0, w: 580, h: 10 }
+    brick = { row: 5, col: 5, w: 0, h: 6, x: 0, y: 0, gapBetween: 10, gapT: 30, gapLR: 30 }, //LR left right, T top only
     paddle.x = (canvas.width - paddle.w) / 2,
     paddle.y = canvas.height - paddle.h,
     brickContainer = canvas.width - 2 * brick.gapLR,
     brick.w = (brickContainer - (brick.col-1) * brick.gapBetween) / brick.col;  //generate brick width
+
+/***************************/
+/*    Game controllers     */
+/***************************/
 
 document.addEventListener("keydown", keyDownHandler);
 document.addEventListener("keyup", keyUpHandler);
@@ -49,23 +55,36 @@ function mouseMoveHandler(e) {
   }
 }
 
-bricks = [];
-for(var r = 0; r < brick.row; r++) {
-  bricks[r] = [];
-  for(var c = 0; c < brick.col; c++) {
-    bricks[r][c] =  {x: 0, y: 0, status: 1}
+/***************************************/
+/*    Initiate bricks on game load     */
+/***************************************/
+
+function bricksInit() {
+  bricks = [];
+  for(var r = 0; r < brick.row; r++) {
+    bricks[r] = [];
+    for(var c = 0; c < brick.col; c++) {
+      bricks[r][c] =  {x: 0, y: 0, status: 'visible', hardness: 1} // brick is visible having hardness of 1 by default
+      bricks[r][c].hardness = (Math.round(Math.random()) == 0) ? 1 : 2; // generating bricks of random hardness (of 1 or 2)
+      // console.log('hardnessA: ' + bricks[r][c].hardness);    
+    }
   }
 }
+
+/************************************/
+/*    functions run every frame     */
+/************************************/
 
 function drawBricks() {
   for (var r = 0; r < brick.row; r++) {
     for ( var c = 0; c < brick.col; c++) {
-      if(bricks[r][c].status == 1 ) {
+      if(bricks[r][c].status == 'visible' ) {
         brick.x = brick.gapLR + c * (brick.w + brick.gapBetween);
         brick.y = brick.gapT + r * (brick.h + brick.gapBetween);
         ctx.beginPath();
         ctx.rect(brick.x, brick.y, brick.w, brick.h); // ctx.rect(x1, y1, x2, y2)
-        ctx.fillStyle = "#c0392b";
+        ctx.fillStyle = (bricks[r][c].hardness == 1) ? "#7f8c8d" : "#2c3e50";
+        // console.log('hardnessB: ' + bricks[r][c].hardness);
         ctx.fill();
         ctx.closePath();
         bricks[r][c].x = brick.x;
@@ -91,19 +110,23 @@ function drawPaddle() {
   ctx.closePath();
 }
 
-function brickDetection() {
+function collisionDetection() {
   for (var r = 0; r < brick.row; r++) {
     for ( var c = 0; c < brick.col; c++) {
       var b = bricks[r][c];
-      if(b.status == 1 ) {
-        // if ball touches any brick
-        if(ball.x > b.x && ball.x < b.x+brick.w && ball.y > b.y && ball.y < b.y+brick.h) {
-          ball.dy = -ball.dy;
-          b.status = 0;
-          score++;
-          if(score == brick.row*brick.col) {
-            alert("you win");
-            document.location.reload();
+      if(b.status == 'visible' ) {
+        if(ball.x > b.x && ball.x < b.x+brick.w && ball.y > b.y && ball.y < b.y+brick.h) { // if ball touches any brick
+          if(b.hardness == 2 ) { // decrease hardness of ball first before breaking
+            b.hardness = 1;
+            ball.dy = -ball.dy;
+          } else {
+            ball.dy = -ball.dy;
+            b.status = 'hidden';
+            score++;
+            if(score == brick.row*brick.col) {
+              alert("you win");
+              document.location.reload();
+            }
           }
         }
       }
@@ -129,7 +152,7 @@ function draw() {
   drawBricks();
   drawBall();
   drawPaddle();
-  brickDetection();
+  collisionDetection();
   drawScore();
   drawLives();
 
@@ -164,5 +187,6 @@ function draw() {
   // requestAnimationFrame(draw);
 }
 
+bricksInit();
 setInterval(draw, 5);
 // draw();
