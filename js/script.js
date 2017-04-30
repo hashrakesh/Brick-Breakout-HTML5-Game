@@ -7,11 +7,15 @@ var ctx = canvas.getContext('2d');
 var pi = Math.PI,
     leftPressed = false,
     rightPressed = false,
+    brickHavingBallPower,
+    brickHavingPaddlePower,
+    brickCount = 0,
     score = 0,
     lives = 3,
     ball = { x: canvas.width/2, y: canvas.height-30, r: 10, dx: 1, dy: -1 }
     paddle = { x: 0, y: 0, w: 100, h: 10 }
-    brick = { row: 5, col: 5, w: 0, h: 6, x: 0, y: 0, gapBetween: 10, gapT: 30, gapLR: 30 }, //LR left right, T top only
+    brick = { row: 2, col: 2, w: 0, h: 6, x: 0, y: 0, gapBetween: 10, gapT: 30, gapLR: 30 }, //LR left right, T top only
+    totalNoOfBricks = brick.row * brick.col,
     paddle.x = (canvas.width - paddle.w) / 2,
     paddle.y = canvas.height - paddle.h,
     brickContainer = canvas.width - 2 * brick.gapLR,
@@ -55,6 +59,24 @@ function mouseMoveHandler(e) {
   }
 }
 
+/*********************************/
+/*    getRndInteger function     */
+/*********************************/
+
+function getRndInteger(min, max) { //min included and max excluded
+    return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function applyPower() {
+  // brickHavingBallPower = getRndInteger(1, totalNoOfBricks + 1);
+  brickHavingPaddlePower = getRndInteger(1, totalNoOfBricks + 1);
+  // if(brickHavingPaddlePower == brickHavingBallPower) {
+  //   applyPower();
+  // }
+  // console.log('brickHavingBallPower: ' +brickHavingBallPower);
+  // console.log('brickHavingPaddlePower: ' + brickHavingPaddlePower);
+}
+
 /***************************************/
 /*    Initiate bricks on game load     */
 /***************************************/
@@ -64,9 +86,13 @@ function bricksInit() {
   for(var r = 0; r < brick.row; r++) {
     bricks[r] = [];
     for(var c = 0; c < brick.col; c++) {
-      bricks[r][c] =  {x: 0, y: 0, status: 'visible', hardness: 1} // brick is visible having hardness of 1 by default
-      bricks[r][c].hardness = (Math.round(Math.random()) == 0) ? 1 : 2; // generating bricks of random hardness (of 1 or 2)
-      // console.log('hardnessA: ' + bricks[r][c].hardness);    
+      ++brickCount;
+      bricks[r][c] =  {x: 0, y: 0, status: 'visible', hardness: 1, power: 'none'} // brick is visible having hardness of 1 by default
+      bricks[r][c].hardness = getRndInteger(1,3); // generating bricks of random hardness (of 1 or 2)
+      if(brickHavingPaddlePower == brickCount) {
+        bricks[r][c].hardness = 1;
+        bricks[r][c].power = 'paddlePower';
+      }
     }
   }
 }
@@ -84,7 +110,9 @@ function drawBricks() {
         ctx.beginPath();
         ctx.rect(brick.x, brick.y, brick.w, brick.h); // ctx.rect(x1, y1, x2, y2)
         ctx.fillStyle = (bricks[r][c].hardness == 1) ? "#7f8c8d" : "#2c3e50";
-        // console.log('hardnessB: ' + bricks[r][c].hardness);
+        if(bricks[r][c].power == 'paddlePower') {
+          ctx.fillStyle = "#8e44ad";
+        }
         ctx.fill();
         ctx.closePath();
         bricks[r][c].x = brick.x;
@@ -105,7 +133,7 @@ function drawBall() {
 function drawPaddle() {
   ctx.beginPath();
   ctx.rect(paddle.x, paddle.y, paddle.w, paddle.h);
-  ctx.fillStyle = "#2c3e50";
+  ctx.fillStyle = "#8e44ad";
   ctx.fill();
   ctx.closePath();
 }
@@ -122,8 +150,12 @@ function collisionDetection() {
           } else {
             ball.dy = -ball.dy;
             b.status = 'hidden';
-            score++;
-            if(score == brick.row*brick.col) {
+            ++score;
+            if(b.power == 'paddlePower') {
+              alert('you got paddle power');
+              paddle.w += 100; 
+            }
+            if(score == totalNoOfBricks) {
               alert("you win");
               document.location.reload();
             }
@@ -187,6 +219,8 @@ function draw() {
   // requestAnimationFrame(draw);
 }
 
+applyPower();
 bricksInit();
+
 setInterval(draw, 5);
 // draw();
