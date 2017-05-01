@@ -2,6 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  text-decoration: none;
 }
 body {
     font-family: sans-serif;
@@ -122,10 +123,17 @@ td, th {
     border-radius: 5px;
     font-weight: bold;
     cursor: pointer;
-}
-.btns span#pause {
-	margin-right: 10px;
+    margin: 0 10px;
 }
 .btns span:hover {
     background: #ffc455;
+}
+.game-status {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 50px;
+    font-weight: bold;
+    display: none;
 }
