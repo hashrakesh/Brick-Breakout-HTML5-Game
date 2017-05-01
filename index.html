@@ -25,6 +25,13 @@
 		<div class="left">
 			<div class="canvas-outer">
 				<canvas id="myCanvas" width="600" height="300"></canvas>
+				<p class="game-status" id="pause">Pause</p>
+				<p class="game-status" id="play">Play</p>
+			</div>
+			<div class="btns">
+				<span id="pause" onclick="pauseGame()">Pause</span>
+				<span id="play" onclick="playGame()">Play</span>
+				<span id="clear" onclick="clearLocalStorage()">Replay</span>
 			</div>
 		</div>
 		<div class="right">
@@ -58,11 +65,12 @@
 					<span class="name">Hard</span>
 				</div>
 			</div>
- -->			<div class="section">
+ -->
+ 			<div class="section">
 				<h3 class="setting-heading">Last Five Scores</h3>
 				<table>
 					<tr>
-						<th>Turn</th>
+						<th>Player</th>
 						<th>Score</th>
 					</tr>
 					<tr>
@@ -86,13 +94,6 @@
 						<td id="turn5">-</td>
 					</tr>
 				</table>
-			</div>
-			<div class="section">
-				<!-- <h3 class="setting-heading">Play/Pause Game</h3> -->
-				<div class="btns">
-					<span id="pause" onclick="pauseGame()">Pause</span>
-					<span id="play" onclick="playGame()">Play</span>
-				</div>
 			</div>
 		</div>
 		<div class="clearfix"></div>

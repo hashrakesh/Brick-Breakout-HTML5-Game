@@ -1,7 +1,3 @@
-/********************************************/
-/*    LocalStorage Variable declarations    */
-/********************************************/
-
 /*******************************/
 /*    Variable declarations    */
 /*******************************/
@@ -9,13 +5,15 @@
 var canvas = document.getElementById('myCanvas');
 var ctx = canvas.getContext('2d');
 var pi = Math.PI,
+    pauseValue = true,
+    playValue = false,
     leftPressed = false,
     rightPressed = false,
     brickHavingBallPower,
     brickHavingPaddlePower,
     brickCount = 0,
     score = 0,
-    turns = 3,
+    players = 5,
     currentTurn = 1,
     ball = { x: canvas.width/2, y: canvas.height-30, r: 10, dx: 1, dy: -1, type: 'soft'}
     paddle = { x: 0, y: 0, w: 100, h: 10 }
@@ -82,6 +80,30 @@ function applyPower() {
   }
   // console.log('brickHavingBallPower: ' +brickHavingBallPower);
   // console.log('brickHavingPaddlePower: ' + brickHavingPaddlePower);
+}
+
+function setScoreLocally(score, turn) {
+    if(typeof(Storage) !== "undefined") {
+        // localStorage.currentPlayer = turn + 1;
+        if(turn == 1) localStorage.score1 = score;
+        if(turn == 2) localStorage.score2 = score;
+        if(turn == 3) localStorage.score3 = score;
+        if(turn == 4) localStorage.score4 = score;
+        if(turn == 5) localStorage.score5 = score;
+    } else {
+        document.getElementById("status").innerHTML = "Sorry, your browser does not support web storage...";
+    }
+}
+
+function getScoreLocally() {
+    if (!localStorage.currentPlayer) {
+        localStorage.currentPlayer = 1;
+    }
+    if (localStorage.score1) document.getElementById("turn1").innerHTML = localStorage.score1;
+    if (localStorage.score2) document.getElementById("turn2").innerHTML = localStorage.score2;
+    if (localStorage.score3) document.getElementById("turn3").innerHTML = localStorage.score3;
+    if (localStorage.score4) document.getElementById("turn4").innerHTML = localStorage.score4;
+    if (localStorage.score5) document.getElementById("turn5").innerHTML = localStorage.score5;
 }
 
 /***************************************/
@@ -159,7 +181,7 @@ function collisionDetection() {
       if(b.status == 'visible' ) {
         if(ball.x > b.x && ball.x < b.x+brick.w && ball.y > b.y && ball.y < b.y+brick.h) { // if ball touches any brick
           if(b.hardness == 2 && ball.type == 'soft') { // decrease hardness of ball first before breaking (only when ball is soft)
-            b.hardness = 1; 
+            b.hardness = 1;
             ball.dy = -ball.dy;
           } else {
             ball.dy = -ball.dy;
@@ -167,7 +189,7 @@ function collisionDetection() {
             ++score;
             if(b.power == 'paddlePower') {
               alert(paddleAlert);
-              paddle.w += 100; 
+              paddle.w += 100;
             }
             if(b.power == 'ballPower') {
               alert(ballAlert);
@@ -194,7 +216,7 @@ function drawScore() {
 function drawTurns() {
   ctx.font = "16px Arial";
   ctx.fillStyle = "#0095DD";
-  ctx.fillText("Turn: " + currentTurn, canvas.width-65, 20);
+  ctx.fillText("Player: " + localStorage.currentPlayer, canvas.width-75, 20);
 }
 
 function draw() {
@@ -206,18 +228,25 @@ function draw() {
   collisionDetection();
   drawScore();
   drawTurns();
+  getScoreLocally();
+
+  document.getElementById("pause").style.display = 'none';
+  document.getElementById("play").style.display = 'none';
 
   if(ball.y + ball.dy < ball.r) { // top and ball collision detection
     ball.dy = -ball.dy;
   } else if(ball.y + ball.dy > canvas.height-ball.r) {  // bottom and ball collision detections
       if(ball.x > paddle.x && ball.x < paddle.x + paddle.w) { // paddle and ball collision detection
         ball.dy = -ball.dy;
-      } else {
-        document.getElementById('turn'+turns).innerHTML = score;
-        currentTurn += 1;
+    } else { // if ball hits the floor
+        // document.getElementById('turn'+players).innerHTML = score;
+        // currentTurn = localStorage.currentPlayer;
+        setScoreLocally(score, localStorage.currentPlayer);
+        localStorage.currentPlayer = Number(localStorage.currentPlayer) + 1;
         document.location.reload();
-        if(currentTurn > turns) {
-          // turns = 1;
+
+        if(localStorage.currentPlayer > players) {
+          // players = 1;
           // alert("GAME OVER_____Reload Page ?");
           // document.location.reload();
           if (confirm("GAME OVER_____Reload Page ?") == true) {
@@ -226,9 +255,9 @@ function draw() {
           } else {
               pauseGame();
           }
-          document.getElementById("demo").innerHTML = txt;
+        //   document.getElementById("demo").innerHTML = txt;
         } else {
-          alert('Play your turn no: ' + currentTurn);
+          alert('Play your turn no: ' + localStorage.currentPlayer);
           ball.x = canvas.width/2;
           ball.y = canvas.height-30;
           ball.dx = 1;
@@ -251,22 +280,38 @@ function draw() {
 applyPower();
 bricksInit();
 
-game_loop = setInterval(draw, 5);
+function clearLocalStorage() {
+    pauseGame();
+    if (confirm("Clear Local Storage ?") == true) {
+        window.localStorage.clear();
+        document.location.reload();
+    }
+}
+
+function pauseGame() {
+  if(pauseValue == true) {
+    playValue = true;
+    pauseValue = false;
+    clearInterval(game_loop);
+    document.getElementById("pause").style.display = 'block';
+    document.getElementById("play").style.display = 'none';
+    console.log('pause value:' + pauseValue);
+    console.log('play value:' + playValue);
+  }
+}
+
+function playGame() {
+  if(playValue == true) {
+    pauseValue = true;
+    playValue = false;  
+    document.getElementById("pause").style.display = 'none';
+    document.getElementById("play").style.display = 'block';
+
+    if(typeof game_loop != "undefined") clearInterval(game_loop);
+    game_loop = setInterval(draw, 100);
+    console.log('pause value:' + pauseValue);
+    console.log('play value:' + playValue);
+  }
+}
+game_loop = setInterval(draw, 100);
 // draw();
-
-
-
-
-
-function pauseGame()
-{ 
-  clearInterval(game_loop);
-  console.log('paused now!');
-}
-function playGame()
-{
-  if(typeof game_loop != "undefined") clearInterval(game_loop);
-  game_loop = setInterval(draw, 5);  
-  console.log('play mode on!');
-}
-
