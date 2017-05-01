@@ -261,10 +261,12 @@ game_loop = setInterval(draw, 5);
 function pauseGame()
 { 
   clearInterval(game_loop);
+  console.log('paused now!');
 }
 function playGame()
 {
   if(typeof game_loop != "undefined") clearInterval(game_loop);
   game_loop = setInterval(draw, 5);  
+  console.log('play mode on!');
 }
 
