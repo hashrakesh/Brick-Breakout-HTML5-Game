@@ -82,14 +82,14 @@ function applyPower() {
   // console.log('brickHavingPaddlePower: ' + brickHavingPaddlePower);
 }
 
-function setScoreLocally(score, turn) {
+function setScoreLocally(score, player) {
     if(typeof(Storage) !== "undefined") {
-        // localStorage.currentPlayer = turn + 1;
-        if(turn == 1) localStorage.score1 = score;
-        if(turn == 2) localStorage.score2 = score;
-        if(turn == 3) localStorage.score3 = score;
-        if(turn == 4) localStorage.score4 = score;
-        if(turn == 5) localStorage.score5 = score;
+        // localStorage.currentPlayer = player + 1;
+        if(player == 1) localStorage.score1 = score;
+        if(player == 2) localStorage.score2 = score;
+        if(player == 3) localStorage.score3 = score;
+        if(player == 4) localStorage.score4 = score;
+        if(player == 5) localStorage.score5 = score;
     } else {
         document.getElementById("status").innerHTML = "Sorry, your browser does not support web storage...";
     }
@@ -106,6 +106,24 @@ function getScoreLocally() {
     if (localStorage.score5) document.getElementById("turn5").innerHTML = localStorage.score5;
 }
 
+function findWinner() {
+  var winner = 1;
+  var max = Math.max(localStorage.score1, localStorage.score2, localStorage.score3, localStorage.score4, localStorage.score5);
+
+  if(localStorage.score1 == max) winner = 1;
+  if(localStorage.score2 == max) winner = 2;
+  if(localStorage.score3 == max) winner = 3;
+  if(localStorage.score4 == max) winner = 4;
+  if(localStorage.score5 == max) winner = 5;
+  console.log('max: ' + max);
+  console.log('winner: ' + winner);
+  console.log("score 1: " + localStorage.score1);
+  console.log("score 2: " + localStorage.score2);
+  console.log("score 3: " + localStorage.score3);
+  console.log("score 4: " + localStorage.score4);
+  console.log("score 5: " + localStorage.score5);
+  return winner;
+}
 /***************************************/
 /*    Initiate bricks on game load     */
 /***************************************/
@@ -213,9 +231,12 @@ function drawScore() {
   ctx.fillText("Score: " + score, 8, 20);
 }
 
-function drawTurns() {
+function drawPlayers() {
   ctx.font = "16px Arial";
   ctx.fillStyle = "#0095DD";
+  // if (!localStorage.currentPlayer || localStorage.currentPlayer > players) {
+  //     localStorage.currentPlayer = 1;
+  // }
   ctx.fillText("Player: " + localStorage.currentPlayer, canvas.width-75, 20);
 }
 
@@ -227,7 +248,7 @@ function draw() {
   drawPaddle();
   collisionDetection();
   drawScore();
-  drawTurns();
+  drawPlayers();
   getScoreLocally();
 
 
@@ -241,25 +262,34 @@ function draw() {
       if(ball.x > paddle.x && ball.x < paddle.x + paddle.w) { // paddle and ball collision detection
         ball.dy = -ball.dy;
     } else { // if ball hits the floor
-        // document.getElementById('turn'+players).innerHTML = score;
-        // currentTurn = localStorage.currentPlayer;
         setScoreLocally(score, localStorage.currentPlayer);
-        localStorage.currentPlayer = Number(localStorage.currentPlayer) + 1;
-        document.location.reload();
-
-        if(localStorage.currentPlayer > players) {
-          // players = 1;
-          // alert("GAME OVER_____Reload Page ?");
-          // document.location.reload();
-          if (confirm("GAME OVER_____Reload Page ?") == true) {
-              alert('loading');
-              document.location.reload();
-          } else {
-              pauseGame();
-          }
-        //   document.getElementById("demo").innerHTML = txt;
+        if(localStorage.currentPlayer < players) {
+          localStorage.currentPlayer = Number(localStorage.currentPlayer) + 1;
+          // console.log('1: ' + localStorage.currentPlayer);
+          document.location.reload();
+        } 
+        if(localStorage.currentPlayer == players+2) {
+            alert("Winner of this Game is Player " + findWinner());
+            window.localStorage.clear();
+            document.location.reload();
         } else {
-          alert('Play your turn no: ' + localStorage.currentPlayer);
+          // console.log('2: ' + localStorage.currentPlayer);
+          if (localStorage.currentPlayer == 5){
+            if (!localStorage.hack) {
+                localStorage.hack = 0;
+            }
+            ++localStorage.hack;
+            if (localStorage.hack == 2){
+              document.location.reload();
+              alert("Winner of this Game is Player " + findWinner());
+              window.localStorage.clear();
+            }
+            // console.log(localStorage.hack);
+          }
+          if (!localStorage.currentPlayer) {
+              localStorage.currentPlayer = 1;
+          }
+          alert('Turn of Player: ' + localStorage.currentPlayer);
           ball.x = canvas.width/2;
           ball.y = canvas.height-30;
           ball.dx = 1;
@@ -283,10 +313,12 @@ applyPower();
 bricksInit();
 
 function clearLocalStorage() {
-    pauseGame();
-    if (confirm("Clear Local Storage ?") == true) {
+    clearInterval(game_loop);
+    if (confirm("Clear Local Storage and Restart Game?") == true) {
         window.localStorage.clear();
         document.location.reload();
+    } else {
+      pauseGame();
     }
 }
 
@@ -298,8 +330,6 @@ function pauseGame() {
     clearInterval(game_loop);
     document.getElementById("pause").style.display = 'block';
     document.getElementById("play").style.display = 'none';
-    console.log('pause value:' + pauseValue);
-    console.log('play value:' + playValue);
   }
 }
 
@@ -312,10 +342,9 @@ function playGame() {
 
     if(typeof game_loop != "undefined") clearInterval(game_loop);
     game_loop = setInterval(draw, 5);
-    console.log('pause value:' + pauseValue);
-    console.log('play value:' + playValue);
   }
 }
+
 game_loop = setInterval(draw, 5);
 
 // draw();
