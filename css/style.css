@@ -115,6 +115,8 @@ td, th {
     position: absolute;
     width: 100%;
     bottom: 0;
+    box-sizing: border-box;
+    left: 0;
 }
 .btns span {
     background: #ffa600;
@@ -139,3 +141,12 @@ td, th {
     display: none;
 }
 
+.credits {
+    position: absolute;
+    bottom: 0;
+    text-align: center;
+    padding: 18px 0;
+    background: black;
+    color: white;
+    width: 100%;
+}

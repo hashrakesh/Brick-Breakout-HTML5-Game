@@ -17,7 +17,7 @@ var pi = Math.PI,
     currentTurn = 1,
     ball = { x: canvas.width/2, y: canvas.height-30, r: 10, dx: 1, dy: -1, type: 'soft'}
     paddle = { x: 0, y: 0, w: 100, h: 10 }
-    brick = { row: 3, col: 3, w: 0, h: 10, x: 0, y: 0, gapBetween: 10, gapT: 30, gapLR: 30 }, //LR left right, T top only
+    brick = { row: 4, col: 4, w: 0, h: 10, x: 0, y: 0, gapBetween: 10, gapT: 30, gapLR: 30 }, //LR left right, T top only
     totalNoOfBricks = brick.row * brick.col,
     paddle.x = (canvas.width - paddle.w) / 2,
     paddle.y = canvas.height - paddle.h,
@@ -64,12 +64,44 @@ function mouseMoveHandler(e) {
   }
 }
 
-/*********************************/
-/*    getRndInteger function     */
-/*********************************/
+/**************************/
+/*    Misc. functions     */
+/**************************/
 
 function getRndInteger(min, max) { //min included and max excluded
     return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function clearLocalStorage() {
+    clearInterval(game_loop);
+    if (confirm("Clear Local Storage and Restart Game?") == true) {
+        window.localStorage.clear();
+        document.location.reload();
+    } else {
+      pauseGame();
+    }
+}
+
+function pauseGame() {
+  if(pauseValue == true) {
+    playValue = true;
+    pauseValue = false;
+    clearInterval(game_loop);
+    document.getElementById("pause").style.display = 'block';
+    document.getElementById("play").style.display = 'none';
+  }
+}
+
+function playGame() {
+  if(playValue == true) {
+    pauseValue = true;
+    playValue = false;  
+    document.getElementById("pause").style.display = 'none';
+    document.getElementById("play").style.display = 'block';
+
+    if(typeof game_loop != "undefined") clearInterval(game_loop);
+    game_loop = setInterval(draw, 5);
+  }
 }
 
 function applyPower() {
@@ -124,6 +156,7 @@ function findWinner() {
   console.log("score 5: " + localStorage.score5);
   return winner;
 }
+
 /***************************************/
 /*    Initiate bricks on game load     */
 /***************************************/
@@ -312,38 +345,6 @@ function draw() {
 applyPower();
 bricksInit();
 
-function clearLocalStorage() {
-    clearInterval(game_loop);
-    if (confirm("Clear Local Storage and Restart Game?") == true) {
-        window.localStorage.clear();
-        document.location.reload();
-    } else {
-      pauseGame();
-    }
-}
-
-
-function pauseGame() {
-  if(pauseValue == true) {
-    playValue = true;
-    pauseValue = false;
-    clearInterval(game_loop);
-    document.getElementById("pause").style.display = 'block';
-    document.getElementById("play").style.display = 'none';
-  }
-}
-
-function playGame() {
-  if(playValue == true) {
-    pauseValue = true;
-    playValue = false;  
-    document.getElementById("pause").style.display = 'none';
-    document.getElementById("play").style.display = 'block';
-
-    if(typeof game_loop != "undefined") clearInterval(game_loop);
-    game_loop = setInterval(draw, 5);
-  }
-}
 
 game_loop = setInterval(draw, 5);
 
