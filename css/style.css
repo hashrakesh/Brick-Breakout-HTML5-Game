@@ -54,6 +54,7 @@ h1.settings {
 .bottom .right {
     border-top: 1px solid rgba(255,255,255,.3);
     /* padding: 20px 10px; */
+    position: relative;
 }
 .bottom .left {
     border-top: 1px solid rgba(255,255,255,.3);
@@ -98,14 +99,21 @@ table {
     width: 100%;
     background: rgba(0,0,0,0.1);
 }
-td {
+th {
+	/* text-decoration: underline; */
+}
+td, th {
     text-align: center;
     padding: 2px 0;
+    color: rgba(255, 255, 255, 0.8);
 }
 .btns {
-	background: rgba(0,0,0,0.1);
+    background: rgba(0,0,0,0.3);
     padding: 10px;
     text-align: center;
+    position: absolute;
+    width: 100%;
+    bottom: 0;
 }
 .btns span {
     background: #ffa600;

@@ -1,3 +1,7 @@
+/********************************************/
+/*    LocalStorage Variable declarations    */
+/********************************************/
+
 /*******************************/
 /*    Variable declarations    */
 /*******************************/
@@ -11,7 +15,8 @@ var pi = Math.PI,
     brickHavingPaddlePower,
     brickCount = 0,
     score = 0,
-    lives = 3,
+    turns = 3,
+    currentTurn = 1,
     ball = { x: canvas.width/2, y: canvas.height-30, r: 10, dx: 1, dy: -1, type: 'soft'}
     paddle = { x: 0, y: 0, w: 100, h: 10 }
     brick = { row: 3, col: 3, w: 0, h: 10, x: 0, y: 0, gapBetween: 10, gapT: 30, gapLR: 30 }, //LR left right, T top only
@@ -20,6 +25,8 @@ var pi = Math.PI,
     paddle.y = canvas.height - paddle.h,
     brickContainer = canvas.width - 2 * brick.gapLR,
     brick.w = (brickContainer - (brick.col-1) * brick.gapBetween) / brick.col;  //generate brick width
+var ballAlert = "/**************************************************************************/\n/*    BALL POWER UP: now you can break hard bricks in one hit only    */\n/**************************************************************************/";
+var paddleAlert = "/**************************************************************************/\n/*    PADDLE POWER UP: now you have increased lenght of paddle    */\n/**************************************************************************/";
 
 /***************************/
 /*    Game controllers     */
@@ -159,11 +166,11 @@ function collisionDetection() {
             b.status = 'hidden';
             ++score;
             if(b.power == 'paddlePower') {
-              alert('you got paddle power');
+              alert(paddleAlert);
               paddle.w += 100; 
             }
             if(b.power == 'ballPower') {
-              alert('ball is hard now');
+              alert(ballAlert);
               ball.type = 'hard'; // used to bypass hardness detection case above.
               ball.r += 2;
             }
@@ -184,10 +191,10 @@ function drawScore() {
   ctx.fillText("Score: " + score, 8, 20);
 }
 
-function drawLives() {
+function drawTurns() {
   ctx.font = "16px Arial";
   ctx.fillStyle = "#0095DD";
-  ctx.fillText("Lives: " + lives, canvas.width-65, 20);
+  ctx.fillText("Turn: " + currentTurn, canvas.width-65, 20);
 }
 
 function draw() {
@@ -198,20 +205,30 @@ function draw() {
   drawPaddle();
   collisionDetection();
   drawScore();
-  drawLives();
+  drawTurns();
 
-  // top collision detection
-  if(ball.y + ball.dy < ball.r) {
+  if(ball.y + ball.dy < ball.r) { // top and ball collision detection
     ball.dy = -ball.dy;
-  } else if(ball.y + ball.dy > canvas.height-ball.r) {  // bottom collision detections
-      if(ball.x > paddle.x && ball.x < paddle.x + paddle.w) { // paddle collision detection
+  } else if(ball.y + ball.dy > canvas.height-ball.r) {  // bottom and ball collision detections
+      if(ball.x > paddle.x && ball.x < paddle.x + paddle.w) { // paddle and ball collision detection
         ball.dy = -ball.dy;
       } else {
-        --lives;
-        if(!lives) {
-          alert("GAME OVER_____Reload Page ?");
-          document.location.reload();
+        document.getElementById('turn'+turns).innerHTML = score;
+        currentTurn += 1;
+        document.location.reload();
+        if(currentTurn > turns) {
+          // turns = 1;
+          // alert("GAME OVER_____Reload Page ?");
+          // document.location.reload();
+          if (confirm("GAME OVER_____Reload Page ?") == true) {
+              alert('loading');
+              document.location.reload();
+          } else {
+              pauseGame();
+          }
+          document.getElementById("demo").innerHTML = txt;
         } else {
+          alert('Play your turn no: ' + currentTurn);
           ball.x = canvas.width/2;
           ball.y = canvas.height-30;
           ball.dx = 1;
@@ -241,11 +258,11 @@ game_loop = setInterval(draw, 5);
 
 
 
-function pause()
+function pauseGame()
 { 
   clearInterval(game_loop);
 }
-function play()
+function playGame()
 {
   if(typeof game_loop != "undefined") clearInterval(game_loop);
   game_loop = setInterval(draw, 5);  
