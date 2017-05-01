@@ -128,6 +128,7 @@ td, th {
 .btns span:hover {
     background: #ffc455;
 }
+
 .game-status {
     position: absolute;
     left: 50%;
@@ -137,3 +138,4 @@ td, th {
     font-weight: bold;
     display: none;
 }
+

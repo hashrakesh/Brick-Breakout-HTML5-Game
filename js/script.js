@@ -230,8 +230,10 @@ function draw() {
   drawTurns();
   getScoreLocally();
 
+
   document.getElementById("pause").style.display = 'none';
   document.getElementById("play").style.display = 'none';
+
 
   if(ball.y + ball.dy < ball.r) { // top and ball collision detection
     ball.dy = -ball.dy;
@@ -288,6 +290,7 @@ function clearLocalStorage() {
     }
 }
 
+
 function pauseGame() {
   if(pauseValue == true) {
     playValue = true;
@@ -308,10 +311,11 @@ function playGame() {
     document.getElementById("play").style.display = 'block';
 
     if(typeof game_loop != "undefined") clearInterval(game_loop);
-    game_loop = setInterval(draw, 100);
+    game_loop = setInterval(draw, 5);
     console.log('pause value:' + pauseValue);
     console.log('play value:' + playValue);
   }
 }
-game_loop = setInterval(draw, 100);
+game_loop = setInterval(draw, 5);
+
 // draw();
